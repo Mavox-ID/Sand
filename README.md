@@ -42,20 +42,20 @@ Simply open website: [**https://mavox-id.github.io/Sand**](https://mavox-id.gith
 
 ```javascript
 // Encrypt
-Input: HELLO
-Output: A0B6C9D11E13
+Input: YOU
+Output: E11F2O1
 
 // Decrypt
-Input: A0B6C9D11E13
-Output: HELLO
+Input: E11F2O1
+Output: YOU
 
 // To Numbers
-Input: A0B6C9
-Output: 102639
+Input: E11F2O1
+Output: 51162151
 
 // To Sand Code
-Input: 102639
-Output: A0B6C9
+Input: 51162151
+Output: E11F2O1
 ```
 
 ## 📖 How It Works
