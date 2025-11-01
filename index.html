@@ -259,7 +259,7 @@ button:active {
 
         <div class="input-group">
             <label id="inputLabel">Enter Text (A-Z, max 5 letters):</label>
-            <input type="text" id="inputText" placeholder="HELLO">
+            <input type="text" id="inputText" placeholder="OK">
             <div class="error" id="error"></div>
         </div>
 
@@ -351,7 +351,7 @@ button:active {
             if (mode === 'standard') {
                 inputLabel.textContent = 'Enter Text (A-Z, max 5 letters):';
                 inputField.maxLength = 5;
-                inputField.placeholder = 'HELLO';
+                inputField.placeholder = 'OK';
                 actionButtons.innerHTML = '<button class="action-btn encrypt-btn" onclick="encrypt()">🔒 Encrypt</button>';
                 infoBox.innerHTML = `
                     <strong>Standard Mode:</strong><br>
@@ -431,7 +431,6 @@ button:active {
             let usedCipherLetters = new Set();
             let usedNumbers = new Set();
             
-            // Build the encrypted string and track what's used
             for (let char of input) {
                 const code = cipherMap[char];
                 const cipherLetter = code.match(/[A-P]/)[0];
