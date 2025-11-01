@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sand Cipher System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            background: #f0f0f0;
+            padding: 5px;
+            border-radius: 15px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: transparent;
+            color: #666;
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        button.action-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .encrypt-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .decrypt-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            background: linear-gradient(135deg, #e0f7fa 0%, #e1bee7 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            word-break: break-all;
+        }
+
+        .info {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.85em;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .info strong {
+            color: #667eea;
+        }
+
+        .error {
+            color: #f5576c;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .cipher-table {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 5px;
+            margin-top: 10px;
+            font-size: 0.75em;
+        }
+
+        .cipher-item {
+            background: white;
+            padding: 5px;
+            border-radius: 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏜️ Sand Cipher</h1>
+        <p class="subtitle">Advanced Encryption System</p>
+
+        <div class="mode-selector">
+            <button class="mode-btn active" onclick="switchMode('standard')">📝 Standard</button>
+            <button class="mode-btn" onclick="switchMode('decrypt')">🔓 Decrypt</button>
+            <button class="mode-btn" onclick="switchMode('numbers')">🔢 Numbers</button>
+        </div>
+
+        <div class="input-group">
+            <label id="inputLabel">Enter Text (A-Z, max 5 letters):</label>
+            <input type="text" id="inputText" placeholder="HELLO">
+            <div class="error" id="error"></div>
+        </div>
+
+        <div class="buttons" id="actionButtons">
+            <button class="action-btn encrypt-btn" onclick="encrypt()">🔒 Encrypt</button>
+        </div>
+
+        <div class="result" id="result">Your result will appear here</div>
+
+        <div class="info" id="infoBox">
+            <strong>Standard Mode:</strong><br>
+            • Encrypt English text (max 5 letters) to Sand code<br>
+            • No repeating letters or numbers in code<br>
+            • Format: A1B2C3 (letters A-C + numbers 0-16)<br>
+            <div class="cipher-table" id="cipherTable"></div>
+        </div>
+    </div>
+<div class="cipher-table" id="cipherTable"></div>
+
+  <script>
+        let currentMode = 'standard';
+
+        // Generate cipher map avoiding conflicts where cipher letter value = number
+        // Example: B cannot have C3 because C=3, making it 33 (conflict)
+        function generateCipherMap() {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const cipherLetters = 'ABCDEFGHIJKLMNOP'.split('');
+            const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+            const map = {};
+            
+            let letterIdx = 0;
+            let numIdx = 0;
+            
+            for (let i = 0; i < alphabet.length; i++) {
+                let attempts = 0;
+                let validCombo = false;
+                let letter, number;
+                
+                // Find a valid combination
+                while (!validCombo && attempts < 100) {
+                    letter = cipherLetters[letterIdx % cipherLetters.length];
+                    number = numbers[numIdx % numbers.length];
+                    
+                    const letterValue = letter.charCodeAt(0) - 64; // A=1, B=2, C=3...
+                    
+                    // Check if letter value equals number (forbidden)
+                    if (letterValue !== number) {
+                        validCombo = true;
+                    } else {
+                        // Skip this number, try next
+                        numIdx++;
+                    }
+                    
+                    attempts++;
+                }
+                
+                if (validCombo) {
+                    map[alphabet[i]] = letter + number;
+                }
+                
+                // Move to next with alternating pattern
+                if (i % 2 === 0) {
+                    letterIdx += 2;
+                    numIdx += 3;
+                } else {
+                    letterIdx += 1;
+                    numIdx += 2;
+                }
+            }
+            
+            return map;
+        }
+
+        const cipherMap = generateCipherMap();
+        const reverseCipherMap = {};
+        for (let key in cipherMap) {
+            reverseCipherMap[cipherMap[key]] = key;
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            const buttons = document.querySelectorAll('.mode-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const inputLabel = document.getElementById('inputLabel');
+            const inputField = document.getElementById('inputText');
+            const actionButtons = document.getElementById('actionButtons');
+            const infoBox = document.getElementById('infoBox');
+            const result = document.getElementById('result');
+            
+            result.textContent = 'Your result will appear here';
+            document.getElementById('error').style.display = 'none';
+            inputField.value = '';
+
+            if (mode === 'standard') {
+                inputLabel.textContent = 'Enter Text (A-Z, max 5 letters):';
+                inputField.maxLength = 5;
+                inputField.placeholder = 'HELLO';
+                actionButtons.innerHTML = '<button class="action-btn encrypt-btn" onclick="encrypt()">🔒 Encrypt</button>';
+                infoBox.innerHTML = `
+                    <strong>Standard Mode:</strong><br>
+                    • Encrypt English text (max 5 letters) to Sand code<br>
+                    • <span style="color: #f5576c;">STRICT RULES:</span><br>
+                    • No repeating cipher letters or numbers in ONE message<br>
+                    • Cipher letter value ≠ number (B≠2, C≠3, etc.)<br>
+                    • Format: A0B4C5 (all unique per message)<br>
+                    <div class="cipher-table" id="cipherTable"></div>
+                `;
+                displayCipherTable();
+            } else if (mode === 'decrypt') {
+                inputLabel.textContent = 'Enter Sand Cipher (No Limit):';
+                inputField.removeAttribute('maxLength');
+                inputField.placeholder = 'A8A5A12A12A15';
+                actionButtons.innerHTML = '<button class="action-btn decrypt-btn" onclick="decrypt()">🔓 Decrypt</button>';
+                infoBox.innerHTML = `
+                    <strong>Decrypt Mode:</strong><br>
+                    • Decode Sand cipher back to English text<br>
+                    • No character limit for input<br>
+                    • Example: A8A5A12A12A15 → HELLO<br>
+                `;
+            } else if (mode === 'numbers') {
+                inputLabel.textContent = 'Enter Sand Code or Numbers:';
+                inputField.removeAttribute('maxLength');
+                inputField.placeholder = 'B2A1A14A4';
+                actionButtons.innerHTML = `
+                    <button class="action-btn encrypt-btn" onclick="sandToNumbers()">➡️ To Numbers</button>
+                    <button class="action-btn decrypt-btn" onclick="numbersToSand()">⬅️ To Sand</button>
+                `;
+                infoBox.innerHTML = `
+                    <strong>Numbers Mode:</strong><br>
+                    • Convert Sand code letters to alphabet positions<br>
+                    • A=1, B=2, C=3 ... P=16 + keep numbers as is<br>
+                    • Example: B2A1D4 → 22114<br>
+                    • Reverse: 22114 → B2A1D4<br>
+                `;
+            }
+        }
+
+        function displayCipherTable() {
+            const table = document.getElementById('cipherTable');
+            if (!table) return;
+            let html = '';
+            for (let letter in cipherMap) {
+                html += `<div class="cipher-item">${letter}→${cipherMap[letter]}</div>`;
+            }
+            table.innerHTML = html;
+        }
+
+        function encrypt() {
+            const input = document.getElementById('inputText').value.trim().toUpperCase();
+            const error = document.getElementById('error');
+            const result = document.getElementById('result');
+
+            error.style.display = 'none';
+
+            if (!input) {
+                error.textContent = 'Please enter text!';
+                error.style.display = 'block';
+                return;
+            }
+
+            if (!/^[A-Z]+$/.test(input)) {
+                error.textContent = 'Only English letters A-Z allowed!';
+                error.style.display = 'block';
+                return;
+            }
+
+            if (input.length > 5) {
+                error.textContent = 'Maximum 5 letters allowed!';
+                error.style.display = 'block';
+                return;
+            }
+
+            let encrypted = '';
+            let usedCipherLetters = new Set();
+            let usedNumbers = new Set();
+            
+            // Build the encrypted string and track what's used
+            for (let char of input) {
+                const code = cipherMap[char];
+                const cipherLetter = code.match(/[A-P]/)[0];
+                const number = parseInt(code.match(/\d+/)[0]);
+                
+                encrypted += code;
+                usedCipherLetters.add(cipherLetter);
+                usedNumbers.add(number);
+            }
+            
+            const allCipherLetters = encrypted.match(/[A-P]/g) || [];
+            const allNumbers = encrypted.match(/\d+/g)?.map(n => parseInt(n)) || [];
+            
+            const cipherLetterCounts = {};
+            for (let letter of allCipherLetters) {
+                cipherLetterCounts[letter] = (cipherLetterCounts[letter] || 0) + 1;
+                if (cipherLetterCounts[letter] > 1) {
+                    error.textContent = `Conflict: Cipher letter ${letter} repeats in encrypted message!`;
+                    error.style.display = 'block';
+                    return;
+                }
+            }
+            
+            const numberCounts = {};
+            for (let num of allNumbers) {
+                numberCounts[num] = (numberCounts[num] || 0) + 1;
+                if (numberCounts[num] > 1) {
+                    error.textContent = `Conflict: Number ${num} repeats in encrypted message!`;
+                    error.style.display = 'block';
+                    return;
+                }
+            }
+            
+            for (let letter of usedCipherLetters) {
+                const letterValue = letter.charCodeAt(0) - 64;
+                if (usedNumbers.has(letterValue)) {
+                    error.textContent = `Conflict: Cipher letter ${letter}(=${letterValue}) conflicts with number ${letterValue}!`;
+                    error.style.display = 'block';
+                    return;
+                }
+            }
+            
+            for (let num of usedNumbers) {
+                if (num >= 1 && num <= 16) {
+                    const conflictLetter = String.fromCharCode(64 + num);
+                    if (usedCipherLetters.has(conflictLetter)) {
+                        error.textContent = `Conflict: Number ${num} conflicts with cipher letter ${conflictLetter}!`;
+                        error.style.display = 'block';
+                        return;
+                    }
+                }
+            }
+
+            result.textContent = encrypted;
+            result.style.background = 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)';
+        }
+
+        function decrypt() {
+            const input = document.getElementById('inputText').value.trim().toUpperCase();
+            const error = document.getElementById('error');
+            const result = document.getElementById('result');
+
+            error.style.display = 'none';
+
+            if (!input) {
+                error.textContent = 'Please enter Sand cipher!';
+                error.style.display = 'block';
+                return;
+            }
+
+            const regex = /([A-P])(\d+)/g;
+            let match;
+            let decrypted = '';
+            let lastIndex = 0;
+
+            while ((match = regex.exec(input)) !== null) {
+                if (match.index !== lastIndex) {
+                    error.textContent = 'Invalid Sand cipher format!';
+                    error.style.display = 'block';
+                    return;
+                }
+                
+                const code = match[1] + match[2];
+                if (reverseCipherMap[code]) {
+                    decrypted += reverseCipherMap[code];
+                } else {
+                    error.textContent = `Invalid code: ${code}`;
+                    error.style.display = 'block';
+                    return;
+                }
+                
+                lastIndex = regex.lastIndex;
+            }
+
+            if (lastIndex !== input.length) {
+                error.textContent = 'Invalid Sand cipher format!';
+                error.style.display = 'block';
+                return;
+            }
+
+            if (!decrypted) {
+                error.textContent = 'No valid cipher found!';
+                error.style.display = 'block';
+                return;
+            }
+
+            result.textContent = decrypted;
+            result.style.background = 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)';
+        }
+
+        function sandToNumbers() {
+            const input = document.getElementById('inputText').value.trim().toUpperCase();
+            const error = document.getElementById('error');
+            const result = document.getElementById('result');
+
+            error.style.display = 'none';
+
+            if (!input) {
+                error.textContent = 'Please enter Sand code!';
+                error.style.display = 'block';
+                return;
+            }
+
+            const regex = /([A-P])(\d+)/g;
+            let match;
+            let numbers = '';
+            let lastIndex = 0;
+
+            while ((match = regex.exec(input)) !== null) {
+                if (match.index !== lastIndex) {
+                    error.textContent = 'Invalid Sand code format!';
+                    error.style.display = 'block';
+                    return;
+                }
+                
+                const letter = match[1];
+                const number = match[2];
+                
+                const letterPos = letter.charCodeAt(0) - 64;
+                numbers += letterPos + number;
+                
+                lastIndex = regex.lastIndex;
+            }
+
+            if (lastIndex !== input.length) {
+                error.textContent = 'Invalid Sand code format!';
+                error.style.display = 'block';
+                return;
+            }
+
+            if (!numbers) {
+                error.textContent = 'No valid code found!';
+                error.style.display = 'block';
+                return;
+            }
+
+            result.textContent = numbers;
+            result.style.background = 'linear-gradient(135deg, #fff5ba 0%, #ffd3a5 100%)';
+        }
+
+        function numbersToSand() {
+            const input = document.getElementById('inputText').value.trim();
+            const error = document.getElementById('error');
+            const result = document.getElementById('result');
+
+            error.style.display = 'none';
+
+            if (!input) {
+                error.textContent = 'Please enter numbers!';
+                error.style.display = 'block';
+                return;
+            }
+
+            if (!/^\d+$/.test(input)) {
+                error.textContent = 'Only numbers allowed!';
+                error.style.display = 'block';
+                return;
+            }
+
+            let sand = '';
+            let i = 0;
+
+            while (i < input.length) {
+                let letterCodeStr = input[i];
+                i++;
+                
+                if (i < input.length && parseInt(letterCodeStr + input[i]) <= 16) {
+                    letterCodeStr += input[i];
+                    i++;
+                }
+                
+                const letterCode = parseInt(letterCodeStr);
+                
+                if (letterCode < 1 || letterCode > 16) {
+                    error.textContent = `Invalid letter code: ${letterCode} (must be 1-16)`;
+                    error.style.display = 'block';
+                    return;
+                }
+                
+                const letter = String.fromCharCode(64 + letterCode);
+                
+                let numberStr = '';
+                while (i < input.length) {
+                    numberStr += input[i];
+                    i++;
+                    
+                    const currentNum = parseInt(numberStr);
+                    
+                    if (currentNum > 16) {
+                        numberStr = numberStr.slice(0, -1);
+                        i--;
+                        break;
+                    }
+                    
+                    if (i < input.length) {
+                        const peek = parseInt(input[i]);
+                        const peekTwo = i + 1 < input.length ? parseInt(input[i] + input[i + 1]) : 999;
+                        
+                        if (currentNum <= 16 && (peek >= 1 && peek <= 16 || peekTwo >= 1 && peekTwo <= 16)) {
+                            break;
+                        }
+                    }
+                }
+                
+                if (!numberStr) {
+                    error.textContent = 'Could not parse number part!';
+                    error.style.display = 'block';
+                    return;
+                }
+                
+                const number = parseInt(numberStr);
+                if (number > 16) {
+                    error.textContent = `Number too large: ${number} (max 16)`;
+                    error.style.display = 'block';
+                    return;
+                }
+                
+                sand += letter + number;
+            }
+
+            if (!sand) {
+                error.textContent = 'Could not parse numbers!';
+                error.style.display = 'block';
+                return;
+            }
+
+            result.textContent = sand;
+            result.style.background = 'linear-gradient(135deg, #c3cfe2 0%, #c3cfe2 100%)';
+        }
+
+        displayCipherTable();
+
+        document.getElementById('inputText').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                if (currentMode === 'standard') encrypt();
+                else if (currentMode === 'decrypt') decrypt();
+            }
+        });
+    </script>
+</body>
+</html>
