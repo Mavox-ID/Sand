@@ -190,7 +190,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🏜️ Sand Cipher</h1>
+        <h1>Sand Cipher</h1>
         <p class="subtitle">Advanced Encryption System</p>
 
         <div class="mode-selector">
@@ -224,8 +224,6 @@
   <script>
         let currentMode = 'standard';
 
-        // Generate cipher map avoiding conflicts where cipher letter value = number
-        // Example: B cannot have C3 because C=3, making it 33 (conflict)
         function generateCipherMap() {
             const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             const cipherLetters = 'ABCDEFGHIJKLMNOP'.split('');
@@ -240,18 +238,15 @@
                 let validCombo = false;
                 let letter, number;
                 
-                // Find a valid combination
                 while (!validCombo && attempts < 100) {
                     letter = cipherLetters[letterIdx % cipherLetters.length];
                     number = numbers[numIdx % numbers.length];
                     
-                    const letterValue = letter.charCodeAt(0) - 64; // A=1, B=2, C=3...
+                    const letterValue = letter.charCodeAt(0) - 64;
                     
-                    // Check if letter value equals number (forbidden)
                     if (letterValue !== number) {
                         validCombo = true;
                     } else {
-                        // Skip this number, try next
                         numIdx++;
                     }
                     
@@ -262,7 +257,6 @@
                     map[alphabet[i]] = letter + number;
                 }
                 
-                // Move to next with alternating pattern
                 if (i % 2 === 0) {
                     letterIdx += 2;
                     numIdx += 3;
